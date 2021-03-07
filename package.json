@@ -1,0 +1,19 @@
+{
+  "name": "code",
+  "version": "1.0.0",
+  "description": "Slack clone, school assignment.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-c-k/slack_clone.git"
+  },
+  "author": "dc.koefoed@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/d-c-k/slack_clone/issues"
+  },
+  "homepage": "https://github.com/d-c-k/slack_clone#readme"
+}
