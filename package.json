@@ -4,7 +4,8 @@
   "description": "Slack clone, school assignment.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/d-c-k/slack_clone/issues"
   },
-  "homepage": "https://github.com/d-c-k/slack_clone#readme"
+  "homepage": "https://github.com/d-c-k/slack_clone#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  }
 }
