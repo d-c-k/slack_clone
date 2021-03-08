@@ -1,0 +1,17 @@
+<%- include('blocks/topBlock', {title: 'Log in'}) -%>
+<div class="pageHeader">
+    <p>Log in</p>
+</div>
+<div class="loginForm">
+    <form method="post" action="/login">
+        <label id="username">Username:</label>
+        <input type="text" name="username" id="username">
+        <label id="password">Password:</label>
+        <input type="password" name="password" id="password">
+        <p><br></p>
+        <input type="submit" value=">> Submit >>">
+    </form>
+    <br>
+    <a href="/register">>> Register new user >></a>
+</div>   
+<%- include('blocks/bottomBlock') -%>

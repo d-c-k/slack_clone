@@ -1,0 +1,17 @@
+<%- include('blocks/topBlock', {title: 'Register'}) -%>
+<div class="pageHeader">
+    <p>Register new user</p>
+</div>
+<div class="loginForm">
+    <form method="post" action="/login">
+        <label id="email">Email:</label>
+        <input type="text" name="email" id="email">
+        <label id="username">Username:</label>
+        <input type="text" name="username" id="username">
+        <label id="password">Password(min 6 char, [A-Za-z0-9]):</label>
+        <input type="password" name="password" id="password">
+        <p><br></p>
+        <input type="submit" value=">> Submit >>">
+    </form>
+</div>   
+<%- include('blocks/bottomBlock') -%>
