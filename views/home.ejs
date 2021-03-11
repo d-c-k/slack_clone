@@ -1,9 +1,15 @@
-<%- include('blocks/topBlock', {title: 'Home', status_msg: 'Logged in'}) -%>
+<%- include('blocks/topBlock', {title: 'Home'}, logout = true) -%>
 
 <div class="pageHeader">
-    <a href="">Conversations</a>
-    <a href="">Settings</a>
-    <a href="">Log out</a>
+    <p>Users:</p>
+    <a href="">>> Conversations >></a>
+    <a href="">>> Settings >></a>
+</div>
+
+<div class="userList">    
+    <% userList.map(item => { %>
+        <a href=""><%= item %></a><br>
+    <% }) %>    
 </div>
  
 <%- include('blocks/bottomBlock') -%>

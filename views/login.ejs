@@ -1,9 +1,9 @@
-<%- include('blocks/topBlock', {title: 'Log in'}) -%>
+<%- include('blocks/topBlock', {title: 'Log in'}, logout = false) -%>
 <div class="pageHeader">
     <p>Log in</p>
 </div>
 <div class="loginForm">
-    <form method="post" action="/login">
+    <form method="post" action="/users/login">
         <label id="username">Username:</label>
         <input type="text" name="username" id="username">
         <label id="password">Password:</label>

@@ -1,5 +1,5 @@
 <% if(typeof title === 'undefined') {title = 'Marix'} %>
-<% if(typeof status_msg === 'undefined') {status_msg = '404'} %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,5 +12,21 @@
 <body>
     <div class="statusDiv">
         <p>Status:</p>
-        <p><%= status_msg %></p>
+        <% if(typeof status_msg != 'undefined') { %>
+            <% status_msg.map(item => { %>
+                <br><p><%= item.msg %></p>
+            <% }) %>
+        <% } %>
+        <% if(success_msg != '') { %>
+            <br><p><%= success_msg %></p>
+        <% } %>
+        <% if(error_msg != '') { %>
+            <br><p><%= error_msg %></p>
+        <% } %>
+        <% if(error != '') { %>
+            <br><p><%= error %></p>
+        <% } %>
+        <% if(logout === true){ %>
+            <br><a href="/users/logout"><< Log out <<</a>
+        <% } %>
     </div>
