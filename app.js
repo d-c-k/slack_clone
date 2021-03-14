@@ -13,9 +13,24 @@ require('./config/passport')(passport)
 
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.DB_HOST)
-    .then(() => console.log('connected to db'))
-    .catch(error => console.log(error))
+mongoose.connect(process.env.DB_HOST, (error, db) => {
+    if(error){
+        throw error
+    }
+    console.log('Connected')
+
+    io.on('connection', () => {
+        let chat = db.collection('chats')
+
+        sendStatus = function(s){
+            socket.emit('status', s)
+        }
+
+        chat.find().limit(100).sort({_id:1}).toArray((error, result) => {
+            
+        })
+    })
+})
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -44,19 +59,17 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'))
 app.use('/users', require('./routes/users'))
 
-io.on('connection', socket => {
-    console.log(`user connected`)
+// io.on('connection', socket => {
+//     console.log(`user connected`)
 
-    socket.on('chat message', message => {
-        console.log(`recieved message: ${message}`)
-        io.emit('chat message', message)
-    })
+//     socket.on('chat message', message => {
+//         console.log(`recieved message: ${message}`)
+//         io.emit('chat message', message)
+//     })
 
-    socket.on('disconnect', () => {
-        console.log(`user disconnected`)
-    })
-})
-
-//TEtss
+//     socket.on('disconnect', () => {
+//         console.log(`user disconnected`)
+//     })
+// })
 
 http.listen(3000)
