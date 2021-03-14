@@ -14,7 +14,7 @@ form.addEventListener('submit', e => {
 })
 
 socket.on('chat message', message => {
-    let item = document.createElement('li')
+    let item = document.createElement('P')
     item.textContent = message
     chatWindow.appendChild(item)
 

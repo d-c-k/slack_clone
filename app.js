@@ -8,11 +8,12 @@ const session = require('express-session')
 const passport = require('passport')
 const io = require('socket.io')(http)
 
+require('dotenv').config()
 require('./config/passport')(passport)
 
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost:27017/slack_clone')
+mongoose.connect(process.env.DB_HOST)
     .then(() => console.log('connected to db'))
     .catch(error => console.log(error))
 

@@ -6,7 +6,7 @@ const errorMessage = 'Incorrect username or password'
 module.exports = function(passport){
     passport.use(new LocalStrategy(
         function(username, password, done){
-            User.findOne({username: username}, function(error, user){
+            User.findOne({username: username}, (error, user) => {
                 if(error){
                     return done(error)
                 }
