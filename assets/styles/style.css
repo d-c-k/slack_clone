@@ -34,6 +34,18 @@ input[type=submit] {
     cursor: pointer;
 }
 
+button {
+    font-size: 1rem;
+    background: transparent;
+    border: 1px solid #008f11;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #008f11;
+    color: black;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
@@ -73,5 +85,29 @@ select:-webkit-autofill:focus {
 
 .userList {
     grid-column: 3;
+    grid-row: 3;
+}
+
+.chat {
+    grid-column: 4/6;
     grid-row: 3/4;
+}
+
+.chatWindow{
+    border: 1px solid #008f11;
+    height: 50vh;
+}
+
+.chatInput {
+    box-sizing: border-box;
+    background: black;
+    border: 1px solid #008f11;
+    font-size: 1rem;
+    padding-left: .25rem;
+    width: 80%
+}
+
+.chatBtn {
+    float: right;
+    width: 15%;
 }

@@ -78,17 +78,37 @@ router.post('/login',
         failureFlash: true        
     }),
     (req, res) => {
-        req.flash('success_msg', `Logged in as ${req.body.username}`)
-        res.redirect('/')
+        User.findOne({username: req.user.username}, (error, user, data) => {
+            if(error) res.send(error)
+            user.is_active = true
+            user.save(error => {
+                if(error){
+                    return console.log(error)
+                } else {
+                    req.flash('success_msg', `Logged in as ${req.body.username}`)
+                    res.redirect('/')
+                }
+            })
+        })
     }
 )
 
 // LOG OUT
 
 router.get('/logout', (req, res) => {
-    req.logout()
-    req.flash('success_msg', 'Session terminated')
-    res.redirect('/users/login')
+    User.findOne({username: req.user.username}, (error, user, data) => {
+        if(error) res.send(error)
+        user.is_active = false
+        user.save(error => {
+            if(error){
+                console.log(error)
+            } else {
+                req.logout()
+                req.flash('success_msg', 'Session terminated')
+                res.redirect('/users/login')
+            }
+        })
+    })
 })
 
 module.exports = router

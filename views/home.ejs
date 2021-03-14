@@ -1,15 +1,31 @@
 <%- include('blocks/topBlock', {title: 'Home'}, logout = true) -%>
+<% chat_id = 'tmp' %>
 
 <div class="pageHeader">
     <p>Users:</p>
-    <a href="">>> Conversations >></a>
-    <a href="">>> Settings >></a>
+    <p><%= chat_id %>:</p>    
 </div>
 
 <div class="userList">    
-    <% userList.map(item => { %>
+    <% activeUserList.map(item => { %>
+        <a href="" style="color:#00ff41"><%= item %></a><br>
+    <% }) %> 
+    <% inactiveUserList.map(item => { %>
         <a href=""><%= item %></a><br>
     <% }) %>    
 </div>
  
+<div class="chat">
+    <ul class="chatWindow" id="chatWindow">        
+    </ul>
+    <br>
+    <form id="form">
+        <input id="input" autocomplete="off" class="chatInput">
+        <button class="chatBtn">SEND</button>
+    </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/scripts/chatSocket.js"></script>
+
 <%- include('blocks/bottomBlock') -%>

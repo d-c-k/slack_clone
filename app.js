@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
+const http = require('http').Server(app)
 
 const path = require('path')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
+const io = require('socket.io')(http)
 
 require('./config/passport')(passport)
 
@@ -41,4 +43,17 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'))
 app.use('/users', require('./routes/users'))
 
-app.listen(3000)
+io.on('connection', socket => {
+    console.log(`user connected`)
+
+    socket.on('chat message', message => {
+        console.log(`recieved message: ${message}`)
+        io.emit('chat message', message)
+    })
+
+    socket.on('disconnect', () => {
+        console.log(`user disconnected`)
+    })
+})
+
+http.listen(3000)
