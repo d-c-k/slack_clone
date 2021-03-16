@@ -1,18 +1,27 @@
 <%- include('blocks/topBlock', {title: 'Home'}, logout = true) -%>
-<% chat_id = 'tmp' %>
 
 <div class="pageHeader">
     <p>Users:</p>
-    <p><%= chat_id %>:</p>    
+    <p>Chat:</p>    
 </div>
 
 <div class="userList">    
     <% activeUserList.map(item => { %>
-        <a href="" style="color:#00ff41"><%= item %></a><br>
+        <a 
+            data-userId="<%= item.userId %>"
+            data-username="<%= item.username %>"
+            href="/chat/<%= item.userId %>" 
+            style="color:#00ff41"
+        >
+            <%= item.username %>
+        </a><br>
     <% }) %> 
     <% inactiveUserList.map(item => { %>
-        <a href=""><%= item %></a><br>
-    <% }) %>    
+        <a href="<%= item.userId %>"><%= item.username %></a><br>
+    <% }) %>   
+    <br>
+    <p>Channels:</p><br>
+    <a href="">GENERAL</a>
 </div>
  
 <div class="chat">

@@ -1,0 +1,57 @@
+document.addEventListener('DOMContentLoaded', e => {
+    
+    const userList = document.getElementsByClassName('userList')
+    const listedUsers = document.getElementById('listedUsers')
+    const users = document.getElementsByClassName('userBtn')
+    let userArray = Array.from(users)
+    const selectedUsersArray = []
+    const statusMsg = document.getElementById('FEmsg')
+    const current = document.getElementById('initial')
+    console.log(current)
+
+    selectedUsersArray.push(
+        {
+            username: current.innerHTML,
+            userId: current.dataset.userId
+        }
+    )
+    
+    userArray.map(user => {
+        user.addEventListener('click', e => {
+            if(selectedUsersArray.filter(item => item.userId === user.id).length < 1){
+                statusMsg.innerHTML = ''
+                while(listedUsers.firstChild){
+                    listedUsers.removeChild(listedUsers.lastChild)
+                }
+                selectedUsersArray.push(
+                    {
+                        username: user.innerHTML,
+                        userId: user.id
+                    }
+                )
+                selectedUsersArray.map(item => {
+                    let user = document.createElement('li')
+                    user.textContent = item.username
+                    listedUsers.appendChild(user)
+                })
+            } else {
+                console.log(selectedUsersArray)
+                statusMsg.innerHTML = 'User removed'
+                while(listedUsers.firstChild){
+                    listedUsers.removeChild(listedUsers.lastChild)
+                }
+                let index = selectedUsersArray.map(item => item.userId).indexOf(user.id)
+                if(index !== -1){
+                    selectedUsersArray.splice(index, 1)
+                }
+                selectedUsersArray.map(item => {
+                    let user = document.createElement('li')
+                    user.textContent = item.username
+                    listedUsers.appendChild(user)
+                })
+                console.log(index)
+            }
+        })
+    })
+
+})

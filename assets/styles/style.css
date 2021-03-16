@@ -46,6 +46,11 @@ button:hover {
     color: black;
 }
 
+ul {
+    list-style-type: '+';
+    list-style-position: inside;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
@@ -111,4 +116,15 @@ select:-webkit-autofill:focus {
 .chatBtn {
     float: right;
     width: 15%;
+}
+
+.channelEdit {    
+    grid-column: 4;
+    grid-row: 3/4;
+}
+
+.userBtn, .userBtn:hover {
+    background: none;
+    border: none;
+    color: #008f11;
 }

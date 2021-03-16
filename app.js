@@ -52,7 +52,7 @@ io.on('connection', socket => {
         io.emit('chat message', message)
     })
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', () => {        
         console.log(`user disconnected`)
     })
 })

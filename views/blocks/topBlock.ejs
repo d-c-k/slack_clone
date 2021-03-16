@@ -27,6 +27,10 @@
             <br><p><%= error %></p>
         <% } %>
         <% if(logout === true){ %>
+            <br><p>Logged in as <%= user %></p>
+            <br><p id="FEmsg"></p>
+            <br><p>----------</p>
+            <br><a href="/new_channel">>> New Channel >></a><br>
             <br><a href="">>> Settings >></a><br>
             <br><a href="/users/logout"><< Log out <<</a>
         <% } %>

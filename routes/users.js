@@ -85,7 +85,7 @@ router.post('/login',
                 if(error){
                     return console.log(error)
                 } else {
-                    req.flash('success_msg', `Logged in as ${req.body.username}`)
+                    req.session.user = user
                     res.redirect('/')
                 }
             })
@@ -96,7 +96,7 @@ router.post('/login',
 // LOG OUT
 
 router.get('/logout', (req, res) => {
-    User.findOne({username: req.user.username}, (error, user, data) => {
+    User.findOne({username: req.session.user.username}, (error, user, data) => {
         if(error) res.send(error)
         user.is_active = false
         user.save(error => {

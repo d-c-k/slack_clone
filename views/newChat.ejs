@@ -1,0 +1,48 @@
+<%- include('blocks/topBlock', {title: 'New chat'}, logout = true) -%>
+
+<div class="pageHeader">
+    <p>Users:</p>
+    <p>Create new channel</p>    
+</div>
+
+<div class="userList">    
+    <% activeUserList.map(item => { %>
+        <button 
+            type="button"
+            class="userBtn" 
+            id="<%= item.userId %>" 
+            style="color:#00ff41"
+        >
+            <%= item.username %>
+        </button>
+        <br>
+    <% }) %> 
+    <% inactiveUserList.map(item => { %>
+        <button 
+            type="button"
+            class="userBtn" 
+            id="<%= item.userId %>" 
+        >
+            <%= item.username %>
+        </button>
+        <br>
+    <% }) %>   
+    <br>
+    <p>Channels:</p><br>
+    <a href="">GENERAL</a>
+</div>
+
+<div class="channelEdit">
+    <form method="post" action="/create">
+        <label for="channelName">Channel name:</label>
+        <input type="text" name="channelName" id="channelName">
+        <br><br>
+        <p>Included users:</p>
+        <ul id="listedUsers">
+            <li id="initial" data-userId="<%= currentUserId %>"> <%= user %></li>
+        </ul>
+    </form>
+</div>
+
+<script src="/scripts/addUser.js"></script>
+<%- include('blocks/bottomBlock') -%>
