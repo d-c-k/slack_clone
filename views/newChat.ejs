@@ -33,7 +33,7 @@
 </div>
 
 <div class="channelEdit">
-    <form method="post" action="/create">
+    <form method="post" action="/channels/new_channel">
         <label for="channelName">Channel name:</label>
         <input type="text" name="channelName" id="channelName">
         <br><br>
@@ -41,6 +41,9 @@
         <ul id="listedUsers">
             <li id="initial" data-userId="<%= currentUserId %>"> <%= user %></li>
         </ul>
+        <br>
+        <input type="hidden" name="store" id="store">
+        <input type="submit" value=">> Create channel >>">
     </form>
 </div>
 

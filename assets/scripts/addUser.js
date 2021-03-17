@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', e => {
     
-    const userList = document.getElementsByClassName('userList')
     const listedUsers = document.getElementById('listedUsers')
     const users = document.getElementsByClassName('userBtn')
     let userArray = Array.from(users)
     const selectedUsersArray = []
     const statusMsg = document.getElementById('FEmsg')
     const current = document.getElementById('initial')
+    const store = document.getElementById('store')
     console.log(current)
 
     selectedUsersArray.push(
@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', e => {
                     listedUsers.appendChild(user)
                 })
             } else {
-                console.log(selectedUsersArray)
                 statusMsg.innerHTML = 'User removed'
                 while(listedUsers.firstChild){
                     listedUsers.removeChild(listedUsers.lastChild)
@@ -49,8 +48,10 @@ document.addEventListener('DOMContentLoaded', e => {
                     user.textContent = item.username
                     listedUsers.appendChild(user)
                 })
-                console.log(index)
             }
+            let ids = selectedUsersArray.map(({username, ...item}) => item.userId)
+            ids.shift()
+            store.setAttribute('value', JSON.stringify(Object.values(ids)))
         })
     })
 

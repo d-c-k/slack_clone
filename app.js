@@ -41,8 +41,9 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use('/', require('./routes/index'))
+app.use('/channels', require('./routes/channels'))
 app.use('/users', require('./routes/users'))
+app.use('/', require('./routes/index'))
 
 io.on('connection', socket => {
     console.log(`user connected`)
