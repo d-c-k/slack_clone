@@ -6,7 +6,7 @@ const path = require('path')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
-const io = require('socket.io')(http, {'pingTimeout': 7000, 'pingInterval': 3000})
+const io = require('socket.io')(http)
 
 require('dotenv').config()
 require('./config/passport')(passport)
@@ -45,7 +45,6 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use('/channels', require('./routes/channels'))
 app.use('/users', require('./routes/users'))
 app.use('/', require('./routes/index'))
 

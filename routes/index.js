@@ -44,5 +44,12 @@ router.get('/', ensureAuthenticated, async(req, res) => {
         })
 })
 
+router.post('/new_channel', ensureAuthenticated, (req, res) => {
+    const channelName = req.body.channelName
+    const store = JSON.parse(req.body.store)
+    
+    console.log(store)
+    res.redirect('/')
+})
 
 module.exports = router

@@ -2,7 +2,7 @@ const socket = io()
 
 const form = document.getElementById('form')
 const input = document.getElementById('input')
-const chatWindow = document.getElementById('chatWindow')
+const chatWindow = document.getElementById('innerChatWindow')
 const userData = document.getElementById('user')
 const username = userData.dataset.username
 const userId = userData.dataset.userId

@@ -1,11 +1,11 @@
 <%- include('blocks/topBlock', {title: 'Home'}, logout = true) -%>
 
 <div class="pageHeader">
-    <p>Users:</p>
-    <p>Chat:</p>    
+    <p id="hOne">Users:</p>
+    <p id="hTwo">Chat:</p>    
 </div>
 
-<div class="userList">    
+<div class="userList" id="chatList">    
     <% activeUserList.map(item => { %>
         <a 
             data-userId="<%= item.userId %>"
@@ -24,8 +24,8 @@
     <a href="">GENERAL</a>
 </div>
  
-<div class="chat">
-    <div class="chatWindow" id="chatWindow">        
+<div class="chat" id="chatWindow">
+    <div class="chatWindow" id="innerChatWindow">        
     </div>
     <br>
     <form id="form">
@@ -34,7 +34,48 @@
     </form>
 </div>
 
+<div class="userList" id="newChatList">    
+    <% activeUserList.map(item => { %>
+        <button 
+            type="button"
+            class="userBtn" 
+            id="<%= item.userId %>" 
+            style="color:#00ff41"
+        >
+            <%= item.username %>
+        </button>
+        <br>
+    <% }) %> 
+    <% inactiveUserList.map(item => { %>
+        <button 
+            type="button"
+            class="userBtn" 
+            id="<%= item.userId %>" 
+        >
+            <%= item.username %>
+        </button>
+        <br>
+    <% }) %>   
+</div>
+
+<div class="channelEdit" id="newChatWindow">
+    <form method="post" action="/new_channel">
+        <label for="channelName">Channel name:</label>
+        <input type="text" name="channelName" id="channelName">
+        <br><br>
+        <p>Included users:</p>
+        <ul id="listedUsers">
+            <li id="initial" data-userId="<%= id %>"> <%= user %></li>
+        </ul>
+        <br>
+        <input type="hidden" name="store" id="store">
+        <input type="submit" value=">> Create channel >>">
+    </form>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="/scripts/chatSocket.js"></script>
+<script src="/scripts/addUser.js"></script>
+<script src="/scripts/layout.js"></script>
 
 <%- include('blocks/bottomBlock') -%>

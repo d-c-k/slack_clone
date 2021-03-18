@@ -128,3 +128,9 @@ select:-webkit-autofill:focus {
     border: none;
     color: #008f11;
 }
+
+.menuBtn, .menuBtn:hover {
+    background: none;
+    border: none;
+    color: #008f11;
+}
