@@ -39,7 +39,7 @@
         <br><br>
         <p>Included users:</p>
         <ul id="listedUsers">
-            <li id="initial" data-userId="<%= currentUserId %>"> <%= user %></li>
+            <li id="initial" data-userId="<%= id %>"> <%= user %></li>
         </ul>
         <br>
         <input type="hidden" name="store" id="store">
@@ -48,4 +48,6 @@
 </div>
 
 <script src="/scripts/addUser.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
 <%- include('blocks/bottomBlock') -%>

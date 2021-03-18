@@ -18,7 +18,7 @@ router.get('/new_channel', ensureAuthenticated, async(req, res) => {
                 inactiveUserList = []  
 
                 activeUsers = users.filter(user => user.is_active === true && user._id != req.session.user._id)
-                inactiveUsers = users.filter(user => user.is_active === false)
+                inactiveUsers = users.filter(user => user.is_active === false && user._id != req.session.user._id)
                      
                 activeUsers.map(user  => {
                     activeUserList.push(
@@ -38,8 +38,8 @@ router.get('/new_channel', ensureAuthenticated, async(req, res) => {
                 })
 
                 let user = req.session.user.username
-                let currentUserId = req.session.user._id
-                res.render('newChat', {activeUserList, inactiveUserList, user, currentUserId})                
+                let id = req.session.user._id
+                res.render('newChat', {activeUserList, inactiveUserList, user, id})                
             }
         })
 })

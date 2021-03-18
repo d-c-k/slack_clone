@@ -26,8 +26,14 @@
         <% if(error != '') { %>
             <br><p><%= error %></p>
         <% } %>
-        <% if(logout === true){ %>
-            <br><p>Logged in as <%= user %></p>
+        <% if(logout){ %>
+            <br><p 
+                id="user" 
+                data-username="<%= user %>"
+                data-userId="<%= id %>"
+            >
+                Logged in as <%= user %>
+            </p>
             <br><p id="FEmsg"></p>
             <br><p>----------</p>
             <br><a href="/channels/new_channel">>> New Channel >></a><br>

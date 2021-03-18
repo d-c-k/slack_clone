@@ -96,19 +96,19 @@ router.post('/login',
 // LOG OUT
 
 router.get('/logout', (req, res) => {
-    User.findOne({username: req.session.user.username}, (error, user, data) => {
-        if(error) res.send(error)
-        user.is_active = false
-        user.save(error => {
-            if(error){
-                console.log(error)
-            } else {
+    // User.findOne({username: req.session.user.username}, (error, user, data) => {
+    //     if(error) res.send(error)
+    //     user.is_active = false
+    //     user.save(error => {
+    //         if(error){
+    //             console.log(error)
+    //         } else {
                 req.logout()
                 req.flash('success_msg', 'Session terminated')
                 res.redirect('/users/login')
-            }
-        })
-    })
+    //         }
+    //     })
+    // })
 })
 
 module.exports = router
