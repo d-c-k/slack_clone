@@ -5,14 +5,16 @@ document.addEventListener('DOMContentLoaded', e => {
     let userArray = Array.from(users)
     const selectedUsersArray = []
     const statusMsg = document.getElementById('FEmsg')
-    const current = document.getElementById('initial')
+    const current = document.getElementById('user')
     const store = document.getElementById('store')
-    console.log(current)
+    let ids = [current.dataset.userid]
+
+    store.setAttribute('value', JSON.stringify(Object.values(ids)))
 
     selectedUsersArray.push(
         {
-            username: current.innerHTML,
-            userId: current.dataset.userId
+            username: ` ${current.dataset.username}`,
+            userId: current.dataset.userid
         }
     )
     
@@ -49,8 +51,7 @@ document.addEventListener('DOMContentLoaded', e => {
                     listedUsers.appendChild(user)
                 })
             }
-            let ids = selectedUsersArray.map(({username, ...item}) => item.userId)
-            ids.shift()
+            ids = selectedUsersArray.map(({username, ...item}) => item.userId)
             store.setAttribute('value', JSON.stringify(Object.values(ids)))
         })
     })

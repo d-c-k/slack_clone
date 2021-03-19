@@ -14,7 +14,7 @@ router.get('/register', (req, res) => {
 router.post('/register', async(req, res) => {
     const {email, username, password} = req.body
 
-    const errors = []
+    let errors = []
 
     const regex = /^[A-Za-z0-9]+$/
     

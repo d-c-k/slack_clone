@@ -7,23 +7,24 @@
 
 <div class="userList" id="chatList">    
     <% activeUserList.map(item => { %>
-        <a 
-            data-userId="<%= item.userId %>"
-            data-username="<%= item.username %>"
-            href="/chat/<%= item.userId %>" 
-            style="color:#00ff41"
-        >
-            <%= item.username %>
-        </a><br>
+        <form action="/direct_msg" method="POST">
+            <input type="hidden" name="username" value="<%= item.username %>">
+            <input type="hidden" name="userId" value="<%= item.userId %>">
+            <input type="submit" value="<%= item.username %>" style="color:#00ff41">
+        </form>
     <% }) %> 
     <% inactiveUserList.map(item => { %>
-        <a href="<%= item.userId %>"><%= item.username %></a><br>
+        <form action="/direct_msg" method="POST">
+            <input type="hidden" name="username" value="<%= item.username %>">
+            <input type="hidden" name="userId" value="<%= item.userId %>">
+            <input type="submit" value="<%= item.username %>">
+        </form>
     <% }) %>   
     <br>
     <p>Channels:</p><br>
     <a href="">GENERAL</a>
 </div>
- 
+
 <div class="chat" id="chatWindow">
     <div class="chatWindow" id="innerChatWindow">        
     </div>
@@ -65,7 +66,7 @@
         <br><br>
         <p>Included users:</p>
         <ul id="listedUsers">
-            <li id="initial" data-userId="<%= id %>"> <%= user %></li>
+            <li id="initial"> <%= user %></li>
         </ul>
         <br>
         <input type="hidden" name="store" id="store">

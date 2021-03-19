@@ -12,6 +12,15 @@
 <body>
     <div class="statusDiv">
         <p>Status:</p>
+        <% if(logout){ %>
+            <br><p 
+                id="user" 
+                data-username="<%= user %>"
+                data-userid="<%= id %>"
+            >
+                Logged in as <%= user %>
+            </p>
+        <% } %>    
         <% if(typeof status_msg != 'undefined') { %>
             <% status_msg.map(item => { %>
                 <br><p><%= item.msg %></p>
@@ -26,14 +35,7 @@
         <% if(error != '') { %>
             <br><p><%= error %></p>
         <% } %>
-        <% if(logout){ %>
-            <br><p 
-                id="user" 
-                data-username="<%= user %>"
-                data-userId="<%= id %>"
-            >
-                Logged in as <%= user %>
-            </p>
+        <% if(logout){ %>            
             <br><p id="FEmsg"></p>
             <br><p>----------</p>
             <br><button type="button" class="menuBtn" id="newChanBtn">>> New Channel >></button><br>
