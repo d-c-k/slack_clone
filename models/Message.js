@@ -1,14 +1,21 @@
 const mongoose = require('mongoose')
-const MessageSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const MessageSchema = new Schema({
     channelId: {
         type: Schema.Types.ObjectId,
         ref: 'Channel',
         required: true
     },        
-    senderId: String,
+    senderId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
     messageBody: String
 })

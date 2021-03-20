@@ -1,21 +1,16 @@
 const mongoose = require('mongoose')
-const ChannelSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const ChannelSchema = new Schema({
     channelName: {
         type: String,
-        default: ''
+        required: true
     },
-    userIds: Array,
-    messageIds: Array
+    userIds: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 })
-
-// ChannelSchema
-//     .virtual('name')
-//     .get(() => {
-//         if(this.channelName === ''){
-//             channelName = this.userIds.join('-')
-//         }
-//         return channelName
-//     })
 
 const Channel = mongoose.model('Channel', ChannelSchema)
 

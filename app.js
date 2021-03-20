@@ -12,6 +12,7 @@ require('dotenv').config()
 require('./config/passport')(passport)
 
 const mongoose = require('mongoose')
+mongoose.set('useFindAndModify', false)
 
 mongoose.connect(process.env.DB_HOST, 
     {
@@ -49,39 +50,76 @@ app.use('/users', require('./routes/users'))
 app.use('/', require('./routes/index'))
 
 const User = require('./models/User')
-const users = {}
+const Channel = require('./models/Channel')
+const Message = require('./models/Message')
+const socketUsers = []
+
+const {setUser, removeUser, currentUser, channelUsers} = require('./serverScripts/socketFuncs') 
 
 io.on('connection', socket => {
-    socket.on('setUser', async(username) => {
-        users[socket.id] = username
-        await User.findOne({username: users[socket.id]}, (error, user, data) => {
+    socket.on('connectUser', ({username, userId, channel}) => {
+        const user = setUser(username, userId, socket.id, channel)
+        User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
-            if(user != null){
-                user.is_active = true
-                user.save(error => {
-                    if(error){return console.log(error)}
-                })
-            }            
-        })    
-        console.log(`${username} connected`)    
-    })
-  
-    socket.on('chat message', message => {
-        console.log(`recieved message: ${message}`)
-        io.emit('chat message', {message: message, username: users[socket.id]})
+        })
+        console.log(`${user.username} connected`)
     })
 
-    socket.on('disconnect', async() => {    
-        await User.findOne({username: users[socket.id]}, (error, user, data) => {
+    socket.on('setChannel', ({username, userId, channel}) => {
+        const user = setUser(username, userId, socket.id, channel)
+        let channelName = ''
+        let messages = []
+        User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
-            if(user != null){
-                user.is_active = false
-                user.save(error => {
-                    if(error){return console.log(error)}
-                })
-            }            
+        })
+
+        socket.join(user.channel)
+        
+        Channel.findOne({_id: user.channel})
+            .then(channel =>{
+                channelName = channel.channelName
+            })
+            .catch(error => console.log(error))
+
+        Message.find({channelId: user.channel})
+            .populate('senderId')
+            .then(dbMessages => {
+                messages = dbMessages
+            })
+            .catch(error => console.log(error))
+
+
+        io.to(user.channel).emit('channelData', {
+            channelName: channelName,
+            messages: messages
+        })
+
+        console.log(`${user.username} connected`)
+    })
+  
+    socket.on('chatMessage', message => {
+        const user = currentUser(socket.id)
+        if(user.channel !== 'general'){
+            io.to(user.channel).emit('chatMessage', {message: message, username: user.username})
+            const newMsg = new Message({
+                channelId: user.channel,
+                senderId: user.userId,
+                messageBody: message
+            })
+            newMsg
+                .save()
+                .catch(error => console.log(error))
+        } else {
+            io.emit('chatMessage', {message: message, username: user.username})
+        }
+    })
+
+    socket.on('disconnect', () => {   
+        const user = removeUser(socket.id) 
+        User.findByIdAndUpdate(user.userId, {$set: {is_active: false}}, (error) =>{
+            if(error) console.log(error)
         })    
-        console.log(`user disconnected`)
+        console.log(`${user.username} disconnected`)
     })
 })
 
