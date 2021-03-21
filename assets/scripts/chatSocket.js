@@ -8,6 +8,10 @@ const username = userData.dataset.username
 const userId = userData.dataset.userid
 const channel = userData.dataset.channelid
 
+document.addEventListener('DOMContentLoaded', e => {
+    socket.emit('updateList', )
+})
+
 if(channel !== 'general'){
     socket.emit('setChannel', {username, userId, channel})
 } else {
@@ -15,10 +19,13 @@ if(channel !== 'general'){
 }
 
 socket.on('channelData', ({channelName, messages}) => {
+    while(chatWindow.firstChild){
+        chatWindow.removeChild(chatWindow.lastChild)
+    }
     if(messages.length > 0){
         messages.map(msgItem => {
             let item = document.createElement('P')
-            item.textContent = `${msgItem.senderId}: ${msgItem.messageBody}`
+            item.textContent = `${msgItem.senderId.username}: ${msgItem.messageBody}`
             chatWindow.appendChild(item)
         })
     }
@@ -38,3 +45,4 @@ socket.on('chatMessage', data => {
     item.textContent = `${data.username}: ${data.message}`
     chatWindow.appendChild(item)
 })
+

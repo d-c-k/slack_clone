@@ -52,9 +52,8 @@ app.use('/', require('./routes/index'))
 const User = require('./models/User')
 const Channel = require('./models/Channel')
 const Message = require('./models/Message')
-const socketUsers = []
 
-const {setUser, removeUser, currentUser, channelUsers} = require('./serverScripts/socketFuncs') 
+const {setUser, removeUser, currentUser} = require('./serverScripts/socketFuncs') 
 
 io.on('connection', socket => {
     socket.on('connectUser', ({username, userId, channel}) => {
@@ -65,7 +64,7 @@ io.on('connection', socket => {
         console.log(`${user.username} connected`)
     })
 
-    socket.on('setChannel', ({username, userId, channel}) => {
+    socket.on('setChannel', async({username, userId, channel}) => {
         const user = setUser(username, userId, socket.id, channel)
         let channelName = ''
         let messages = []
@@ -74,26 +73,29 @@ io.on('connection', socket => {
         })
 
         socket.join(user.channel)
-        
-        Channel.findOne({_id: user.channel})
-            .then(channel =>{
-                channelName = channel.channelName
-            })
-            .catch(error => console.log(error))
 
-        Message.find({channelId: user.channel})
-            .populate('senderId')
-            .then(dbMessages => {
-                messages = dbMessages
-            })
-            .catch(error => console.log(error))
-
-
-        io.to(user.channel).emit('channelData', {
-            channelName: channelName,
-            messages: messages
-        })
-
+        await Channel.findOne({_id: user.channel})
+            .exec((error, channel) => {
+                if(error){
+                    return console.log(error)
+                }
+                Message.find({channelId: user.channel})
+                    .populate('senderId', 'username')
+                    .exec((error, dbMessages) => {
+                        if(error){
+                            return console.log(error)
+                        }
+                        messages = dbMessages
+                        channelName = channel.channelName
+                        io.to(user.channel).emit('channelData', {
+                            channelName: channelName,
+                            messages: messages
+                        })
+                    })
+                })
+                
+                
+                
         console.log(`${user.username} connected`)
     })
   
@@ -116,6 +118,7 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {   
         const user = removeUser(socket.id) 
+        console.log(user)
         User.findByIdAndUpdate(user.userId, {$set: {is_active: false}}, (error) =>{
             if(error) console.log(error)
         })    

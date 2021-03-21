@@ -24,14 +24,8 @@ const currentUser = socketId => {
     return user
 }
 
-const channelUsers = channel => {
-    const channelUsers = users.filter(item => item.channel === channel)
-    return channelUsers
-}
-
 module.exports = {
     setUser,
     removeUser,
     currentUser,
-    channelUsers
 }
