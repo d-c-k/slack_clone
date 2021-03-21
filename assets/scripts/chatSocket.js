@@ -4,12 +4,113 @@ const form = document.getElementById('form')
 const input = document.getElementById('input')
 const chatWindow = document.getElementById('innerChatWindow')
 const userData = document.getElementById('user')
+
 const username = userData.dataset.username
 const userId = userData.dataset.userid
 const channel = userData.dataset.channelid
 
+const usersListDiv = document.getElementById('users')
+const channelsListDiv = document.getElementById('channels')
+const newUsersListDiv = document.getElementById('newChatUsers')
+
+function createUserListElement(username, id, element, style){
+    let chatLink = document.createElement('form')
+    chatLink.setAttribute('action', '/direct_msg')
+    chatLink.setAttribute('method', 'POST')
+
+    let input1 = document.createElement('input')
+    input1.setAttribute('type', 'hidden')
+    input1.setAttribute('name', 'username')
+    input1.setAttribute('value', username)
+
+    let input2 = document.createElement('input')
+    input2.setAttribute('type', 'hidden')
+    input2.setAttribute('name', 'userId')
+    input2.setAttribute('value', id)
+
+    let submit = document.createElement('input')
+    submit.setAttribute('type', 'submit')
+    submit.setAttribute('value', username)
+    style && submit.setAttribute('style', style)
+
+    chatLink.appendChild(input1)
+    chatLink.appendChild(input2)
+    chatLink.appendChild(submit)
+    element.appendChild(chatLink)
+}
+
+function createNewUserListElement(username, id, element, style){
+    let br = document.createElement('br')
+    let btn = document.createElement('button')
+    btn.setAttribute('type', 'button')
+    btn.setAttribute('class', 'userBtn')
+    btn.setAttribute('id', id)
+    style && btn.setAttribute('style', style)
+    btn.innerHTML = username
+    element.appendChild(btn)
+    element.appendChild(br)
+}
+
+function createChannelButton(channelName, id, element, users, style){
+    let chanLink = document.createElement('form')
+    chanLink.setAttribute('action', '/channel')
+    chanLink.setAttribute('method', 'POST')
+
+    let input1 = document.createElement('input')
+    input1.setAttribute('type', 'hidden')
+    input1.setAttribute('name', 'channel_name')
+    input1.setAttribute('value', channelName)
+
+    let input2 = document.createElement('input')
+    input2.setAttribute('type', 'hidden')
+    input2.setAttribute('name', 'users')
+    input2.setAttribute('value', JSON.stringify(Object.values(users)))
+
+    let input3 = document.createElement('input')
+    input3.setAttribute('type', 'hidden')
+    input3.setAttribute('name', 'channel_id')
+    input3.setAttribute('value', id)
+
+    let submit = document.createElement('input')
+    submit.setAttribute('type', 'submit')
+    submit.setAttribute('value', channelName)
+    style && submit.setAttribute('style', style)
+    
+    chanLink.appendChild(input1)
+    chanLink.appendChild(input2)
+    chanLink.appendChild(input3)
+    chanLink.appendChild(submit)
+    element.appendChild(chanLink)
+}
+
 document.addEventListener('DOMContentLoaded', e => {
-    socket.emit('updateList', )
+    socket.emit('updateList', () => {})
+})
+socket.on('updateList', data => {
+    activeUsers = data.users.filter(user => user.is_active === true && user._id != userId)
+    inactiveUsers = data.users.filter(user => user.is_active === false && user._id != userId)
+    
+    while(usersListDiv.firstChild){
+        usersListDiv.removeChild(usersListDiv.lastChild)
+    }
+    while(channelsListDiv.firstChild){
+        channelsListDiv.removeChild(channelsListDiv.lastChild)
+    }
+    while(newUsersListDiv.firstChild){
+        newUsersListDiv.removeChild(newUsersListDiv.lastChild)
+    }
+
+    activeUsers.map(item => {
+        createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41')
+        createNewUserListElement(item.username, item._id, newUsersListDiv, 'color:#00ff41')
+    })
+    inactiveUsers.map(item => {
+        createUserListElement(item.username, item._id, usersListDiv)
+        createNewUserListElement(item.username, item._id, newUsersListDiv)
+    })
+    data.channels.map(item => {
+        createChannelButton(item.channelName, item._id, channelsListDiv, item.userIds)
+    })
 })
 
 if(channel !== 'general'){

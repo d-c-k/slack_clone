@@ -53,9 +53,10 @@ const User = require('./models/User')
 const Channel = require('./models/Channel')
 const Message = require('./models/Message')
 
-const {setUser, removeUser, currentUser} = require('./serverScripts/socketFuncs') 
+const {setUser, removeUser, currentUser, filterUsers} = require('./serverScripts/socketFuncs') 
 
 io.on('connection', socket => {
+    
     socket.on('connectUser', ({username, userId, channel}) => {
         const user = setUser(username, userId, socket.id, channel)
         User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
@@ -63,7 +64,7 @@ io.on('connection', socket => {
         })
         console.log(`${user.username} connected`)
     })
-
+    
     socket.on('setChannel', async({username, userId, channel}) => {
         const user = setUser(username, userId, socket.id, channel)
         let channelName = ''
@@ -71,34 +72,53 @@ io.on('connection', socket => {
         User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
         })
-
+        
         socket.join(user.channel)
-
+        
         await Channel.findOne({_id: user.channel})
-            .exec((error, channel) => {
+        .exec((error, channel) => {
+            if(error){
+                return console.log(error)
+            }
+            Message.find({channelId: user.channel})
+            .populate('senderId', 'username')
+            .exec((error, dbMessages) => {
                 if(error){
                     return console.log(error)
                 }
-                Message.find({channelId: user.channel})
-                    .populate('senderId', 'username')
-                    .exec((error, dbMessages) => {
+                messages = dbMessages
+                channelName = channel.channelName
+                io.to(user.channel).emit('channelData', {
+                    channelName: channelName,
+                    messages: messages
+                })
+            })
+        })
+        console.log(user)
+
+        console.log(`${user.username} connected`)
+    })
+    
+    socket.on('updateList', async() => {
+        const user = currentUser(socket.id)
+        await User.find({}, '_id username is_active')
+            .exec((error, users) => {
+                if(error){
+                    return console.log(error)
+                } 
+                Channel.find({'userIds.2': { $exists: true }})   
+                    .populate('userIds', 'username') 
+                    .exec((error, channels) => {
                         if(error){
                             return console.log(error)
                         }
-                        messages = dbMessages
-                        channelName = channel.channelName
-                        io.to(user.channel).emit('channelData', {
-                            channelName: channelName,
-                            messages: messages
-                        })
-                    })
-                })
+                        console.log(channels)
+                        io.emit('updateList', {users, channels})
+                    })         
                 
-                
-                
-        console.log(`${user.username} connected`)
+            })
     })
-  
+
     socket.on('chatMessage', message => {
         const user = currentUser(socket.id)
         if(user.channel !== 'general'){
@@ -118,11 +138,9 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {   
         const user = removeUser(socket.id) 
-        console.log(user)
         User.findByIdAndUpdate(user.userId, {$set: {is_active: false}}, (error) =>{
             if(error) console.log(error)
-        })    
-        console.log(`${user.username} disconnected`)
+        })
     })
 })
 

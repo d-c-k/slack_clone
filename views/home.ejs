@@ -5,24 +5,12 @@
     <p id="hTwo">Chat:</p>    
 </div>
 
-<div class="userList" id="chatList">    
-    <% activeUserList.map(item => { %>
-        <form action="/direct_msg" method="POST">
-            <input type="hidden" name="username" value="<%= item.username %>">
-            <input type="hidden" name="userId" value="<%= item.userId %>">
-            <input type="submit" value="<%= item.username %>" style="color:#00ff41">
-        </form>
-    <% }) %> 
-    <% inactiveUserList.map(item => { %>
-        <form action="/direct_msg" method="POST">
-            <input type="hidden" name="username" value="<%= item.username %>">
-            <input type="hidden" name="userId" value="<%= item.userId %>">
-            <input type="submit" value="<%= item.username %>">
-        </form>
-    <% }) %>   
+<div class="userList" id="chatList">   
+    <div id="users"></div> 
     <br>
     <p>Channels:</p><br>
     <a href="">GENERAL</a>
+    <div id="channels"></div>
 </div>
 
 <div class="chat" id="chatWindow">
@@ -35,28 +23,8 @@
     </form>
 </div>
 
-<div class="userList" id="newChatList">    
-    <% activeUserList.map(item => { %>
-        <button 
-            type="button"
-            class="userBtn" 
-            id="<%= item.userId %>" 
-            style="color:#00ff41"
-        >
-            <%= item.username %>
-        </button>
-        <br>
-    <% }) %> 
-    <% inactiveUserList.map(item => { %>
-        <button 
-            type="button"
-            class="userBtn" 
-            id="<%= item.userId %>" 
-        >
-            <%= item.username %>
-        </button>
-        <br>
-    <% }) %>   
+<div class="userList" id="newChatList">
+    <div id="newChatUsers"></div>     
 </div>
 
 <div class="channelEdit" id="newChatWindow">

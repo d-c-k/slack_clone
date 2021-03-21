@@ -1,11 +1,6 @@
 const express = require('express')
 const router = express.Router()
 
-const filterUsers = require('../serverScripts/filterUsers')
-
-let activeUserList = []
-let inactiveUserList = []   
-
 const User = require('../models/User')
 const Channel = require('../models/Channel')
 
@@ -17,13 +12,9 @@ router.get('/', ensureAuthenticated, async(req, res) => {
             if(error){
                 return console.log(error)
             } else {
-                const userLists = filterUsers(users, req.session.user._id)
-                activeUserList = userLists[0]
-                inactiveUserList = userLists[1]
-
                 let user = req.session.user.username
                 let id = req.session.user._id
-                res.render('home', {activeUserList, inactiveUserList, user, id})
+                res.render('home', {user, id})
             }
         })
 })
@@ -44,13 +35,13 @@ router.post('/new_channel', ensureAuthenticated, async(req, res) => {
         errors.push({msg: 'Include at least two more users than yourself'})
     }
     if(errors.length > 0){
-        res.render('home', {activeUserList, inactiveUserList, user, id, status_msg: errors})
+        res.render('home', {user, id, status_msg: errors})
     } else {
-        await Channel.findOne({$and: [{userIds: { $size: store.length }}, {userIds: { $all : [store]}}]})
+        await Channel.findOne({$and: [{userIds: { $size: store.length }}, {userIds: { $all : store}}]})
             .then(channel => {
                 if(channel){
                     let channel_id = channel._id
-                    res.render('home', {activeUserList, inactiveUserList, user, id, channel_id})
+                    res.render('home', {user, id, channel_id})
                 } else {  
                 const newChannel = new Channel({
                     channelName: channelName, 
@@ -60,12 +51,24 @@ router.post('/new_channel', ensureAuthenticated, async(req, res) => {
                     .save()
                     .then(value => {
                         let channel_id = value._id
-                        res.render('home', {activeUserList, inactiveUserList, user, id, channel_id, status_msg: ['New channel created']})
+                        res.render('home', {user, id, channel_id, status_msg: ['New channel created']})
                     })
                     .catch(error => console.log(error))
                 }
             }) 
     }    
+})
+
+router.post('/channel', ensureAuthenticated, (req, res) => {
+    const user = req.session.user.username
+    const id = req.session.user._id
+
+    const channelName = req.body.channel_name
+    const channel_id = req.body.channel_id
+    const users = JSON.parse(req.body.users)
+
+    console.log(req.body)
+    res.render('home', {user, id, channelName, channel_id, users})
 })
 
 router.post('/direct_msg', ensureAuthenticated, async(req, res) => {  
@@ -75,9 +78,8 @@ router.post('/direct_msg', ensureAuthenticated, async(req, res) => {
     await Channel.findOne({$and: [{userIds: { $size: 2 }}, {userIds: { $all : [req.session.user._id, req.body.userId]}}]})
         .then(channel => {
             if(channel){
-                //res.redirect('/')
                 let channel_id = channel._id
-                res.render('home', {activeUserList, inactiveUserList, user, id, channel_id})
+                res.render('home', {user, id, channel_id})
             } else {        
             const newChannel = new Channel({
                 channelName: `${req.session.user.username} - ${req.body.username}`, 
@@ -87,7 +89,7 @@ router.post('/direct_msg', ensureAuthenticated, async(req, res) => {
                 .save()
                 .then(value => {
                     let channel_id = value._id
-                        res.render('home', {activeUserList, inactiveUserList, user, id, channel_id})
+                        res.render('home', {user, id, channel_id})
                 })
                 .catch(error => console.log(error))
             }  
