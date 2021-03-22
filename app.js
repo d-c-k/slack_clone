@@ -53,7 +53,7 @@ const User = require('./models/User')
 const Channel = require('./models/Channel')
 const Message = require('./models/Message')
 
-const {setUser, removeUser, currentUser, filterUsers} = require('./serverScripts/socketFuncs') 
+const {setUser, removeUser, currentUser} = require('./serverScripts/socketFuncs') 
 
 io.on('connection', socket => {
     
@@ -62,6 +62,7 @@ io.on('connection', socket => {
         User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
         })
+        socket.join(user.channel)
         console.log(`${user.username} connected`)
     })
     
@@ -94,11 +95,28 @@ io.on('connection', socket => {
                 })
             })
         })
-        console.log(user)
-
         console.log(`${user.username} connected`)
     })
     
+    // socket.on('updateList', async() => {
+    //     const user = currentUser(socket.id)
+    //     await User.find({}, '_id username is_active')
+    //         .exec((error, users) => {
+    //             if(error){
+    //                 return console.log(error)
+    //             } 
+    //             Channel.find({'userIds.2': { $exists: true }})   
+    //                 .populate('userIds', 'username') 
+    //                 .exec((error, channels) => {
+    //                     if(error){
+    //                         return console.log(error)
+    //                     }
+    //                     io.emit('updateList', {users, channels})
+    //                 })         
+                
+    //         })
+    // })
+
     socket.on('updateList', async() => {
         const user = currentUser(socket.id)
         await User.find({}, '_id username is_active')
@@ -112,8 +130,13 @@ io.on('connection', socket => {
                         if(error){
                             return console.log(error)
                         }
-                        console.log(channels)
-                        io.emit('updateList', {users, channels})
+                        Channel.find({userIds: { $size: 2 }}, '_id userIds')
+                            .exec((error, dir_channels) => {
+                                if(error){
+                                    return console.log(error)
+                                }
+                                io.emit('updateList', {users, channels, dir_channels})
+                            })
                     })         
                 
             })
@@ -132,14 +155,25 @@ io.on('connection', socket => {
                 .save()
                 .catch(error => console.log(error))
         } else {
-            io.emit('chatMessage', {message: message, username: user.username})
+            io.to(user.channel).emit('chatMessage', {message: message, username: user.username})
         }
     })
 
-    socket.on('disconnect', () => {   
+    socket.on('disconnect', async() => {
         const user = removeUser(socket.id) 
-        User.findByIdAndUpdate(user.userId, {$set: {is_active: false}}, (error) =>{
-            if(error) console.log(error)
+        await User.findByIdAndUpdate(user.userId, {$set: {is_active: false}}, (error) =>{
+            if(error) console.log(error)              
+            User.find({}, '_id username is_active')
+                .exec((error, users) => {
+                    if(error) console.log(error)
+                    Channel.find({'userIds.2': { $exists: true }})   
+                        .populate('userIds', 'username') 
+                        .exec((error, channels) => {
+                            if(error) console.log(error)
+                            io.emit('updateList', {users, channels})
+                        })         
+                    
+                })
         })
     })
 })

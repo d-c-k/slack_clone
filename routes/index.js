@@ -67,7 +67,6 @@ router.post('/channel', ensureAuthenticated, (req, res) => {
     const channel_id = req.body.channel_id
     const users = JSON.parse(req.body.users)
 
-    console.log(req.body)
     res.render('home', {user, id, channelName, channel_id, users})
 })
 

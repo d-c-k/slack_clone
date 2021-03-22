@@ -13,7 +13,7 @@ const usersListDiv = document.getElementById('users')
 const channelsListDiv = document.getElementById('channels')
 const newUsersListDiv = document.getElementById('newChatUsers')
 
-function createUserListElement(username, id, element, style){
+function createUserListElement(username, id, element, style, active){
     let chatLink = document.createElement('form')
     chatLink.setAttribute('action', '/direct_msg')
     chatLink.setAttribute('method', 'POST')
@@ -30,8 +30,12 @@ function createUserListElement(username, id, element, style){
 
     let submit = document.createElement('input')
     submit.setAttribute('type', 'submit')
+    submit.setAttribute('style', style)
+    active
+    ?
+    submit.setAttribute('value', `=> ${username}`)
+    :
     submit.setAttribute('value', username)
-    style && submit.setAttribute('style', style)
 
     chatLink.appendChild(input1)
     chatLink.appendChild(input2)
@@ -51,7 +55,7 @@ function createNewUserListElement(username, id, element, style){
     element.appendChild(br)
 }
 
-function createChannelButton(channelName, id, element, users, style){
+function createChannelButton(channelName, id, element, users, active){
     let chanLink = document.createElement('form')
     chanLink.setAttribute('action', '/channel')
     chanLink.setAttribute('method', 'POST')
@@ -73,8 +77,11 @@ function createChannelButton(channelName, id, element, users, style){
 
     let submit = document.createElement('input')
     submit.setAttribute('type', 'submit')
+    active
+    ? 
+    submit.setAttribute('value', `=> ${channelName}`)
+    :
     submit.setAttribute('value', channelName)
-    style && submit.setAttribute('style', style)
     
     chanLink.appendChild(input1)
     chanLink.appendChild(input2)
@@ -86,7 +93,31 @@ function createChannelButton(channelName, id, element, users, style){
 document.addEventListener('DOMContentLoaded', e => {
     socket.emit('updateList', () => {})
 })
+
 socket.on('updateList', data => {
+    let directChannels = data.dir_channels.filter(item => item.userIds.includes(userId))
+
+    let otherUsers = data.users.filter(user => user._id != userId)
+
+    // let test = directChannels.map(item => {
+    //     let count = 0
+    //     let subuser = item.userIds.filter(subitem => subitem !== userId)
+    //     console.log(subuser)
+    //     let index = {
+    //         otherUser: subitem,
+    //         dir_channel: item._id
+    //     }
+    //     test.push(index)
+    // })
+    // console.log(test)
+    //directChannels.map(item => item.userIds)
+    // let wut = data.users.map(item => item._id).indexOf(directChannels.map(subItem => subItem.userIds))
+    // console.log(wut)
+
+    // if(wut !== -1){
+    //     console.log(wut)
+    // }
+
     activeUsers = data.users.filter(user => user.is_active === true && user._id != userId)
     inactiveUsers = data.users.filter(user => user.is_active === false && user._id != userId)
     
@@ -101,16 +132,46 @@ socket.on('updateList', data => {
     }
 
     activeUsers.map(item => {
-        createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41')
+        if(item._id === channel){
+            createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41', true)
+        } else {
+            createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41')
+        }
         createNewUserListElement(item.username, item._id, newUsersListDiv, 'color:#00ff41')
     })
     inactiveUsers.map(item => {
-        createUserListElement(item.username, item._id, usersListDiv)
+        if(item._id === channel){
+            createUserListElement(item.username, item._id, usersListDiv, 'color:#008f11', true)
+        } else {
+            createUserListElement(item.username, item._id, usersListDiv, 'color:#008f11')
+        }
         createNewUserListElement(item.username, item._id, newUsersListDiv)
     })
+
+    let activeChannels = []
     data.channels.map(item => {
-        createChannelButton(item.channelName, item._id, channelsListDiv, item.userIds)
+        let index = item.userIds.map(innerItem => innerItem._id).indexOf(userId)
+        if(index !== -1){
+            activeChannels.push(item)
+        }
     })
+
+    let general = {
+        channelName: '-GENERAL-',
+        userIds: [],
+        _id: 'general',        
+    }
+
+    activeChannels.unshift(general)
+
+    activeChannels.map(item => {
+        if(item._id === channel){
+            createChannelButton(item.channelName, item._id, channelsListDiv, item.userIds, true)
+        } else {
+            createChannelButton(item.channelName, item._id, channelsListDiv, item.userIds)           
+        }
+    })
+
 })
 
 if(channel !== 'general'){
@@ -146,4 +207,3 @@ socket.on('chatMessage', data => {
     item.textContent = `${data.username}: ${data.message}`
     chatWindow.appendChild(item)
 })
-
