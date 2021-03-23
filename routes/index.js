@@ -78,7 +78,8 @@ router.post('/direct_msg', ensureAuthenticated, async(req, res) => {
         .then(channel => {
             if(channel){
                 let channel_id = channel._id
-                res.render('home', {user, id, channel_id})
+                let dm = req.body.userId
+                res.render('home', {user, id, channel_id, dm})
             } else {        
             const newChannel = new Channel({
                 channelName: `${req.session.user.username} - ${req.body.username}`, 
@@ -88,7 +89,8 @@ router.post('/direct_msg', ensureAuthenticated, async(req, res) => {
                 .save()
                 .then(value => {
                     let channel_id = value._id
-                        res.render('home', {user, id, channel_id})
+                    let dm = req.body.userId
+                        res.render('home', {user, id, channel_id, dm})
                 })
                 .catch(error => console.log(error))
             }  

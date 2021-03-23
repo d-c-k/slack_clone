@@ -98,25 +98,6 @@ io.on('connection', socket => {
         console.log(`${user.username} connected`)
     })
     
-    // socket.on('updateList', async() => {
-    //     const user = currentUser(socket.id)
-    //     await User.find({}, '_id username is_active')
-    //         .exec((error, users) => {
-    //             if(error){
-    //                 return console.log(error)
-    //             } 
-    //             Channel.find({'userIds.2': { $exists: true }})   
-    //                 .populate('userIds', 'username') 
-    //                 .exec((error, channels) => {
-    //                     if(error){
-    //                         return console.log(error)
-    //                     }
-    //                     io.emit('updateList', {users, channels})
-    //                 })         
-                
-    //         })
-    // })
-
     socket.on('updateList', async() => {
         const user = currentUser(socket.id)
         await User.find({}, '_id username is_active')
@@ -130,13 +111,7 @@ io.on('connection', socket => {
                         if(error){
                             return console.log(error)
                         }
-                        Channel.find({userIds: { $size: 2 }}, '_id userIds')
-                            .exec((error, dir_channels) => {
-                                if(error){
-                                    return console.log(error)
-                                }
-                                io.emit('updateList', {users, channels, dir_channels})
-                            })
+                        io.emit('updateList', {users, channels})
                     })         
                 
             })

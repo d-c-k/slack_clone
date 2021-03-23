@@ -10,6 +10,14 @@
     <br>
     <p>Channels:</p><br>
     <div id="channels"></div>
+    <br>
+    <% if(typeof users != 'undefined' && users.length > 2) { %>
+        <p>Users in channel:</p>
+        <br>
+        <% users.map(item => { %>
+            <p><%= item.username %></p>
+        <% }) %>
+    <% } %>
 </div>
 
 <div class="chat" id="chatWindow">

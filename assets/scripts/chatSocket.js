@@ -8,6 +8,7 @@ const userData = document.getElementById('user')
 const username = userData.dataset.username
 const userId = userData.dataset.userid
 const channel = userData.dataset.channelid
+const dm = userData.dataset.dm
 
 const usersListDiv = document.getElementById('users')
 const channelsListDiv = document.getElementById('channels')
@@ -36,7 +37,7 @@ function createUserListElement(username, id, element, style, active){
     submit.setAttribute('value', `=> ${username}`)
     :
     submit.setAttribute('value', username)
-
+    
     chatLink.appendChild(input1)
     chatLink.appendChild(input2)
     chatLink.appendChild(submit)
@@ -95,29 +96,6 @@ document.addEventListener('DOMContentLoaded', e => {
 })
 
 socket.on('updateList', data => {
-    let directChannels = data.dir_channels.filter(item => item.userIds.includes(userId))
-
-    let otherUsers = data.users.filter(user => user._id != userId)
-
-    // let test = directChannels.map(item => {
-    //     let count = 0
-    //     let subuser = item.userIds.filter(subitem => subitem !== userId)
-    //     console.log(subuser)
-    //     let index = {
-    //         otherUser: subitem,
-    //         dir_channel: item._id
-    //     }
-    //     test.push(index)
-    // })
-    // console.log(test)
-    //directChannels.map(item => item.userIds)
-    // let wut = data.users.map(item => item._id).indexOf(directChannels.map(subItem => subItem.userIds))
-    // console.log(wut)
-
-    // if(wut !== -1){
-    //     console.log(wut)
-    // }
-
     activeUsers = data.users.filter(user => user.is_active === true && user._id != userId)
     inactiveUsers = data.users.filter(user => user.is_active === false && user._id != userId)
     
@@ -132,7 +110,7 @@ socket.on('updateList', data => {
     }
 
     activeUsers.map(item => {
-        if(item._id === channel){
+        if(item._id === dm){
             createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41', true)
         } else {
             createUserListElement(item.username, item._id, usersListDiv, 'color:#00ff41')
@@ -140,7 +118,7 @@ socket.on('updateList', data => {
         createNewUserListElement(item.username, item._id, newUsersListDiv, 'color:#00ff41')
     })
     inactiveUsers.map(item => {
-        if(item._id === channel){
+        if(item._id === dm){
             createUserListElement(item.username, item._id, usersListDiv, 'color:#008f11', true)
         } else {
             createUserListElement(item.username, item._id, usersListDiv, 'color:#008f11')

@@ -1,5 +1,6 @@
 <% if(typeof title === 'undefined') {title = 'Marix'} %>
-<% if(typeof channel_id === 'undefined'){channel_id = 'general'}%>
+<% if(typeof channel_id === 'undefined'){channel_id = 'general'} %>
+<% if(typeof dm === 'undefined'){dm = ''} %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,7 @@
                 data-username="<%= user %>"
                 data-userid="<%= id %>"                
                 data-channelid="<%= channel_id %>"
+                data-dm="<%= dm %>"
             >
                 Logged in as <%= user %>
             </p>
