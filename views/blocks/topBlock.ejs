@@ -23,7 +23,8 @@
             >
                 Logged in as <%= user %>
             </p>
-        <% } %>    
+        <% } %>   
+        <div id="notifications"></div> 
         <% if(typeof status_msg != 'undefined') { %>
             <% status_msg.map(item => { %>
                 <br><p><%= item.msg %></p>

@@ -63,13 +63,13 @@ io.on('connection', socket => {
             if(error) console.log(error)
         })
         socket.join(user.channel)
-        console.log(`${user.username} connected`)
     })
     
     socket.on('setChannel', async({username, userId, channel}) => {
         const user = setUser(username, userId, socket.id, channel)
         let channelName = ''
         let messages = []
+        let channelId = ''
         User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
         })
@@ -89,13 +89,14 @@ io.on('connection', socket => {
                 }
                 messages = dbMessages
                 channelName = channel.channelName
+                channelId = channel._id
                 io.to(user.channel).emit('channelData', {
                     channelName: channelName,
+                    channelId: channelId,
                     messages: messages
                 })
             })
         })
-        console.log(`${user.username} connected`)
     })
     
     socket.on('updateList', async() => {
@@ -120,7 +121,24 @@ io.on('connection', socket => {
     socket.on('chatMessage', message => {
         const user = currentUser(socket.id)
         if(user.channel !== 'general'){
-            io.to(user.channel).emit('chatMessage', {message: message, username: user.username})
+            /* ---Notiser WIP---
+            await Channel.findOne({_id: user.channel}, 'channelName')
+                .exec((error, dbname) => {
+                    if(error){
+                        return console.log(error)
+                    }
+                    io.to(user.channel).emit('chatMessage', {
+                        message: message, 
+                        username: user.username, 
+                        channelName: dbname,
+                        channelId: user.channel
+                    })
+                })
+            */
+            io.to(user.channel).emit('chatMessage', {
+                message: message, 
+                username: user.username, 
+            })
             const newMsg = new Message({
                 channelId: user.channel,
                 senderId: user.userId,
@@ -130,7 +148,10 @@ io.on('connection', socket => {
                 .save()
                 .catch(error => console.log(error))
         } else {
-            io.to(user.channel).emit('chatMessage', {message: message, username: user.username})
+            io.to(user.channel).emit('chatMessage', {
+                message: message, 
+                username: user.username,
+            })
         }
     })
 

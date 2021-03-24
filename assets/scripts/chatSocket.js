@@ -4,6 +4,7 @@ const form = document.getElementById('form')
 const input = document.getElementById('input')
 const chatWindow = document.getElementById('innerChatWindow')
 const userData = document.getElementById('user')
+const notifications = document.getElementById('notifications')
 
 const username = userData.dataset.username
 const userId = userData.dataset.userid
@@ -13,6 +14,8 @@ const dm = userData.dataset.dm
 const usersListDiv = document.getElementById('users')
 const channelsListDiv = document.getElementById('channels')
 const newUsersListDiv = document.getElementById('newChatUsers')
+
+let notificationArr = []
 
 function createUserListElement(username, id, element, style, active){
     let chatLink = document.createElement('form')
@@ -158,7 +161,7 @@ if(channel !== 'general'){
     socket.emit('connectUser', {username, userId, channel})
 }
 
-socket.on('channelData', ({channelName, messages}) => {
+socket.on('channelData', ({messages}) => {
     while(chatWindow.firstChild){
         chatWindow.removeChild(chatWindow.lastChild)
     }
@@ -169,6 +172,8 @@ socket.on('channelData', ({channelName, messages}) => {
             chatWindow.appendChild(item)
         })
     }
+
+    chatWindow.scrollTop = chatWindow.scrollHeight
 })
 
 form.addEventListener('submit', e => {
@@ -184,4 +189,24 @@ socket.on('chatMessage', data => {
     let item = document.createElement('P')
     item.textContent = `${data.username}: ${data.message}`
     chatWindow.appendChild(item)
+
+    chatWindow.scrollTop = chatWindow.scrollHeight
+    
+    /* ---Notiser WIP---
+    if(data.channelId !== channel){
+        console.log('hej')
+        notificationArr.push({channel: channelName, id: channelId})
+    }
+    while(notifications.firstChild){
+        notifications.removeChild(notifications.lastChild)
+    }
+    if(notificationArr.length > 0){
+        notificationArr.map(noteItem => {
+            let item = document.createElement('P')
+            item.textContent = `New message in ${noteItem.channel}`
+            notifications.appendChild(item)
+        })
+    }
+    console.log(notificationArr)
+    */
 })

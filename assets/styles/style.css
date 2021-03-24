@@ -66,6 +66,18 @@ select:-webkit-autofill:focus {
   transition: background-color 5000s ease-in-out 0s;
 }
 
+::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #008f11;
+  }
+
 /*||||||||||||||||||||||||||||||||||*/
 /*||||||||||| CUSTOM DIVS ||||||||||*/
 /*||||||||||||||||||||||||||||||||||*/
@@ -102,6 +114,8 @@ select:-webkit-autofill:focus {
     border: 1px solid #008f11;
     height: 50vh;
     padding: 1.2rem;
+    overflow-y: scroll;
+    position : relative; bottom:0;
 }
 
 .chatInput {
