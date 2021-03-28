@@ -1,0 +1,116 @@
+<%- include('blocks/topBlock', {title: 'Home'}, logout = true) -%>
+
+<div class="pageHeader">
+    <p id="hOne">Users:</p>
+    <p id="hTwo">Data:</p>    
+</div>
+
+<div class="userList" id="userDataList">
+    <% if(typeof userData != 'undefined'){ %>
+        <% userData.map(item => { %>
+            <button 
+                class="userBtn"
+                data-id="<%= item._id %>" 
+                id="btn_<%= item._id %>"
+            >
+                <%= item.username %>
+            </button>
+            <br>
+        <% }) %>
+    <% } %>
+</div>
+
+<div class="data_display">
+    <% if(typeof userData != 'undefined'){ %>
+        <% userData.map(item => { %>
+            <% if(id == item._id){ %>
+                <div class="display" id="<%= item._id %>" style="display: none;">
+                    <div class="data_text">
+                        <form action="/user_data" method="POST">
+                            <label for="username">Username:</label>
+                            <input 
+                                type="text"
+                                id="username"
+                                name="username" 
+                                value="<%= item.username %>"
+                            >
+                            <br>
+                            <br>
+                            <label for="email">Email:</label>
+                            <input 
+                                type="text"
+                                id="email"
+                                name="email" 
+                                value="<%= item.email %>"
+                            >
+                            <br>
+                            <br>
+                            <input 
+                                type="hidden" 
+                                name="id"
+                                value="<%= item._id %>"
+                            >
+                            <p>Date of registration: <%= item.date %></p>
+                            <br>
+                            <input type="submit" value=">> Edit >>">
+                        </form>
+                    </div>
+                    <div class="data_img">
+                        <% if(typeof item.profile_pic != 'undefined'){ %>
+                            <img src="<%= item.profile_pic %>">
+                            <br>
+                            <br>
+                            <form 
+                                action="/upload_pic"
+                                method="POST"
+                                enctype="multipart/form-data"
+                            >
+                                <input type="file" id="pic" name="profile_pic">
+                                <br>
+                                <br>
+                                <input type="submit" value=">> Change >>">
+                            </form>
+                        <% } else {%>
+                            <img src="../img/images.jpg">
+                            <br>
+                            <br>
+                            <form 
+                                action="/upload_pic"
+                                method="POST"
+                                enctype="multipart/form-data"
+                            >
+                                <input type="file" id="pic" name="profile_pic">
+                                <br>
+                                <br>
+                                <input type="submit" value=">> Save >>">
+                            </form>
+                        <% } %>
+                    </div>                    
+                </div>
+            <% } else { %>
+                <div class="display" id="<%= item._id %>" style="display: none;">
+                    <div class="data_text">
+                        <p>Username: <%= item.username %></p>
+                        <br>
+                        <p>Email: <%= item.email %></p>
+                        <br>
+                        <p>Date of registration: <%= item.date %></p>
+                    </div>
+                    <div class="data_img">
+                        <% if(typeof item.profile_pic != 'undefined'){ %>
+                            <img src="<%= item.profile_pic %>">
+                        <% } else {%>
+                            <img src="../img/images.jpg">
+                        <% } %>
+                    </div>   
+                </div>
+            <% } %>
+        <% }) %>
+    <% } %>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/scripts/layoutUserData.js"></script>
+<script src="/scripts/chatSocketUserData.js"></script>
+
+<%- include('blocks/bottomBlock') -%>

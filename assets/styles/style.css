@@ -51,6 +51,12 @@ ul {
     list-style-position: inside;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #008f11;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
@@ -77,6 +83,23 @@ select:-webkit-autofill:focus {
   ::-webkit-scrollbar-thumb {
     background: #008f11;
   }
+
+  ::-webkit-file-upload-button {
+    font-family: inherit;
+    font-size: 1rem;
+    color: #008f11;
+    background: transparent;
+    border:none;
+    border-right: 1px solid #008f11;
+    cursor: pointer;
+    outline: none;
+  }
+
+  ::-webkit-file-upload-button:hover {
+    color: black;
+    background: #008f11;
+  }
+
 
 /*||||||||||||||||||||||||||||||||||*/
 /*||||||||||| CUSTOM DIVS ||||||||||*/
@@ -147,4 +170,24 @@ select:-webkit-autofill:focus {
     background: none;
     border: none;
     color: #008f11;
+}
+
+.data_display {
+    grid-column: 4/6;
+    grid-row: 3/4;
+    display: grid;
+    
+}
+
+.display {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 1rem;
+}
+
+.data_text {
+    grid-column: 1;
+}
+
+.data_img {
+    grid-column: 2;
 }

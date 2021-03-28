@@ -7,6 +7,7 @@ const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
 const io = require('socket.io')(http)
+const fileUpload = require('express-fileupload')
 
 require('dotenv').config()
 require('./config/passport')(passport)
@@ -24,6 +25,13 @@ mongoose.connect(process.env.DB_HOST,
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
+app.use(fileUpload({
+    limits: {fileSize: 5 * 1024 * 1024},
+    createParentPath: true
+}))
 
 app.use(express.urlencoded({extended: false}))
 
@@ -57,12 +65,12 @@ const {setUser, removeUser, currentUser} = require('./serverScripts/socketFuncs'
 
 io.on('connection', socket => {
     
-    socket.on('connectUser', ({username, userId, channel}) => {
+    socket.on('connectUser', async({username, userId, channel}) => {
         const user = setUser(username, userId, socket.id, channel)
         User.findByIdAndUpdate(user.userId, {$set: {is_active: true}}, (error) =>{
             if(error) console.log(error)
         })
-        socket.join(user.channel)
+        socket.join(user.channel)        
     })
     
     socket.on('setChannel', async({username, userId, channel}) => {

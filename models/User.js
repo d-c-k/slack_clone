@@ -19,6 +19,9 @@ const UserSchema = new mongoose.Schema({
     is_active: {
         type: Boolean,
         default: false
+    },
+    profile_pic: {
+        type: String
     }
 })
 

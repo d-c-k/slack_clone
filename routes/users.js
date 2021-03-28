@@ -76,14 +76,13 @@ router.post('/login',
     (req, res) => {
         User.findOne({username: req.user.username}, (error, user) => {
             if(error) res.send(error)
-            //----------------- Aktivera innan inlämning! ----------------------//
-            // if (user.is_active === true){
-            //     req.flash('error_msg', 'User already signed in')
-            //     res.redirect('/users/login')
-            // } else {
+            if (user.is_active === true){
+                req.flash('error_msg', 'User already signed in')
+                res.redirect('/users/login')
+            } else {
                 req.session.user = user
                 res.redirect('/')
-            //}
+            }
         })
     }
 )

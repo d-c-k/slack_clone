@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', e => {
             chatWindow.style.display = 'none'
 
             newChatList.style.display = 'block'
-            newChatWindow.style.display = 'block'   
-            
+            newChatWindow.style.display = 'block'  
+                        
             newChanBtn.innerHTML = '<< Chat <<'
 
             hOne.innerHTML = 'Select users:'

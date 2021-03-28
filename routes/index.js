@@ -6,17 +6,10 @@ const Channel = require('../models/Channel')
 
 const {ensureAuthenticated} = require('../config/auth')
 
-router.get('/', ensureAuthenticated, async(req, res) => {
-    await User.find()
-        .exec((error, users) => {
-            if(error){
-                return console.log(error)
-            } else {
-                let user = req.session.user.username
-                let id = req.session.user._id
-                res.render('home', {user, id})
-            }
-        })
+router.get('/', ensureAuthenticated, async(req, res) => {    
+    let user = req.session.user.username
+    let id = req.session.user._id
+    res.render('home', {user, id})
 })
 
 router.post('/new_channel', ensureAuthenticated, async(req, res) => {
@@ -95,6 +88,75 @@ router.post('/direct_msg', ensureAuthenticated, async(req, res) => {
                 .catch(error => console.log(error))
             }  
     })  
+})
+
+router.get('/user_data', ensureAuthenticated, async(req, res) => {
+    await User.find({}, '_id email username date profile_pic')
+        .exec((error, userData) => {
+            if(error){
+                return console.log(error)
+            } else {
+                let user = req.session.user.username
+                let id = req.session.user._id
+                res.render('userData', {user, id, userData})
+            }
+        })
+})
+
+router.post('/user_data', ensureAuthenticated, (req, res) => {
+    const {id, username, email} = req.body
+
+    User.findByIdAndUpdate(id, {$set: {
+        username: username, 
+        email: email
+    }}, (error) =>{
+        if(error) console.log(error)
+    })
+    res.redirect('/user_data')
+})
+
+router.post('/upload_pic', async(req, res) => {
+    await User.find({}, '_id email username date profile_pic')
+        .exec((error, userData) => {
+            if(error) return console.log(error)            
+                const user = req.session.user.username
+                const id = req.session.user._id    
+                try{
+                    if(req.files){
+                        const profile_pic = req.files.profile_pic
+                        const fileType = profile_pic.mimetype.replace('image/', '')
+                        const supportedTypes = [
+                            'png',
+                            'jpg',
+                            'jpeg',
+                            'gif'
+                        ]
+                        const matched = supportedTypes.filter(item => item === fileType)
+                        if(matched.length < 1){
+                            res.render('userData', {user, id, userData, error_msg: 'Unsupported file format'})
+                        } else {
+                            profile_pic.name = `${id}.${fileType}`
+                            const fileName = `./uploads/${profile_pic.name}`
+                            profile_pic.mv(fileName)
+                            User.findOne({_id: id}, (error, dbuser) => {
+                                if(error) console.log(error)
+                                dbuser.profile_pic = fileName
+                                dbuser.save(error => {
+                                    if(error){
+                                        return console.log(error)
+                                    }                    
+                                    res.render('userData', {user, id, userData})
+                                })
+                            })
+                        }
+                    } else {
+                        res.render('userData', {user, id, userData, error_msg: 'No file uploaded'})
+                    }
+                } catch(error){
+                    console.log(error)
+                    res.render('userData', {user, id, userData})
+                }
+        })
 })
 
 module.exports = router
